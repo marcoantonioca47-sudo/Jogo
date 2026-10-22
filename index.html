@@ -78,7 +78,7 @@ function makeGroundTexture(){
  for(let i=0;i<1800;i++){const x=Math.random()*256,y=Math.random()*256,r=1+Math.random()*5;ctx.fillStyle=Math.random()>.5?'rgba(36,52,39,.22)':'rgba(208,208,183,.17)';ctx.beginPath();ctx.ellipse(x,y,r,r*.45,Math.random()*3,0,Math.PI*2);ctx.fill()}
  const tex=new THREE.CanvasTexture(c);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(12,12);tex.colorSpace=THREE.SRGBColorSpace;return tex;
 }
-function buildWorld(){scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb8c2);scene.fog=new THREE.Fog(0x9bb8c2,35,150);scene.add(new THREE.HemisphereLight(0xdcecff,0x343b32,1.65));const sun=new THREE.DirectionalLight(0xfff0d5,2.4);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;scene.add(sun);
+function buildWorld(){const roof=mat(0x343d38);scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb8c2);scene.fog=new THREE.Fog(0x9bb8c2,35,150);scene.add(new THREE.HemisphereLight(0xdcecff,0x343b32,1.65));const sun=new THREE.DirectionalLight(0xfff0d5,2.4);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;scene.add(sun);
 // Terreno com variação de cor para quebrar o aspecto artificial
 const groundGeo=new THREE.PlaneGeometry(220,220,70,70);groundGeo.rotateX(-Math.PI/2);
 const pos=groundGeo.attributes.position,colors=[];
