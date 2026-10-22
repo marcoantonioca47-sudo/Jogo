@@ -78,7 +78,7 @@ function makeGroundTexture(){
  for(let i=0;i<1800;i++){const x=Math.random()*256,y=Math.random()*256,r=1+Math.random()*5;ctx.fillStyle=Math.random()>.5?'rgba(36,52,39,.22)':'rgba(208,208,183,.17)';ctx.beginPath();ctx.ellipse(x,y,r,r*.45,Math.random()*3,0,Math.PI*2);ctx.fill()}
  const tex=new THREE.CanvasTexture(c);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(12,12);tex.colorSpace=THREE.SRGBColorSpace;return tex;
 }
-function buildWorld(){const roof=mat(0x343d38);scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb8c2);scene.fog=new THREE.Fog(0x9bb8c2,35,150);scene.add(new THREE.HemisphereLight(0xdcecff,0x343b32,1.65));const sun=new THREE.DirectionalLight(0xfff0d5,2.4);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;scene.add(sun);
+function buildWorld(){scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb8c2);scene.fog=new THREE.Fog(0x9bb8c2,35,150);scene.add(new THREE.HemisphereLight(0xdcecff,0x343b32,1.65));const sun=new THREE.DirectionalLight(0xfff0d5,2.4);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;scene.add(sun);
 // Terreno com variação de cor para quebrar o aspecto artificial
 const groundGeo=new THREE.PlaneGeometry(220,220,70,70);groundGeo.rotateX(-Math.PI/2);
 const pos=groundGeo.attributes.position,colors=[];
@@ -170,7 +170,7 @@ for(let i=0;i<4;i++){const pole=box(7+i*7,3,-40,.12,6,.12,mat(0x444b43));box(7+i
 function makeWatchTower(x,z){
  const g=new THREE.Group();g.position.set(x,0,z);const steel=mat(0x4a514b),deck=mat(0x574b39);
  for(const px of [-1.25,1.25])for(const pz of [-1.25,1.25]){const leg=box(px,2.4,pz,.16,4.8,.16,steel,g);leg.rotation.z=px*.08;box(px*.65,1.6,pz,.12,.12,2.6,steel,g)}
- box(0,4.8,0,3.2,.22,3.2,deck,g);box(0,6.5,0,3.6,.16,3.6,roof,g);
+ box(0,4.8,0,3.2,.22,3.2,deck,g);box(0,6.5,0,3.6,.16,3.6,mat(0x343d38),g);
  for(const px of [-1.4,1.4])box(px,5.25,0,.12,.8,3,steel,g);
  for(let i=0;i<7;i++){const step=box(-1.25+i*.34,.4+i*.58,-1.5,.65,.09,.12,deck,g);step.rotation.z=-.2}
  scene.add(g)
