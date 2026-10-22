@@ -57,7 +57,7 @@
 window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO DO JOGO: '+(e.message||'falha JavaScript')+' ('+(e.lineno||'?')+')';});
 window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
 
-const $=id=>document.getElementById(id);let THREE=window.THREE,renderer,scene,camera,clock,player,body,head,gun,snowField,snowX=[],snowY=[],snowZ=[],world=[],enemies=[],items=[],keys={},started=false,paused=false,dead=false,won=false,hp=100,ammo=12,reserve=48,kills=0,weapon=0,aiming=false,crouching=false,sprinting=false,autoRun=false,joy={x:0,y:0},yaw=0,pitch=-.15,fireWait=0,enemyWait=0,missionStep=0,docs=null,toastTimer;
+const $=id=>document.getElementById(id);let renderer,scene,camera,clock,player,body,head,gun,snowField,snowX=[],snowY=[],snowZ=[],world=[],enemies=[],items=[],keys={},started=false,paused=false,dead=false,won=false,hp=100,ammo=12,reserve=48,kills=0,weapon=0,aiming=false,crouching=false,sprinting=false,autoRun=false,joy={x:0,y:0},yaw=0,pitch=-.15,fireWait=0,enemyWait=0,missionStep=0,docs=null,toastTimer;
 const weaponNames=['PISTOLA','FUZIL'];const ammoMax=[12,30];let ammoLoaded=[12,30],ammoReserve=[48,120];
 let hitTimer,damageTimer,grenadeReady=true,jeepGroup=null,inJeep=false,reinforcements=[],mapTick=0,outpostCaptured=false,outpostMesh=null;function hitFeedback(){const c=$('cross');c.classList.add('hit');clearTimeout(hitTimer);hitTimer=setTimeout(()=>c.classList.remove('hit'),180)}function damageFeedback(){const f=$('damageflash');f.classList.add('active');clearTimeout(damageTimer);damageTimer=setTimeout(()=>f.classList.remove('active'),180)}
 function say(t){$('toast').textContent=t;$('toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').style.display='none',2300)}
@@ -338,17 +338,17 @@ async function loadThreeFallback(){
  let lastError=null;
  for(const src of sources){
   try{
-   if(window.THREE&&window.THREE.WebGLRenderer){THREE=window.THREE;startThreeGame();return}
+   if(window.THREE&&window.THREE.WebGLRenderer){window.THREE=window.THREE;startThreeGame();return}
    await new Promise((resolve,reject)=>{
     const script=document.createElement('script');let done=false;
     const finish=(err)=>{if(done)return;done=true;clearTimeout(timer);if(err)reject(err);else resolve()};
     const timer=setTimeout(()=>{script.remove();finish(new Error('Tempo esgotado: '+src))},10000);
     script.src=src;script.async=true;
-    script.onload=()=>{if(window.THREE&&window.THREE.WebGLRenderer){THREE=window.THREE;finish()}else finish(new Error('Biblioteca sem WebGLRenderer'))};
+    script.onload=()=>{if(window.THREE&&window.THREE.WebGLRenderer){window.THREE=window.THREE;finish()}else finish(new Error('Biblioteca sem WebGLRenderer'))};
     script.onerror=()=>finish(new Error('Falha ao baixar '+src));
     document.head.appendChild(script);
    });
-   THREE=window.THREE;
+   window.THREE=window.THREE;
    startThreeGame();return;
   }catch(e){lastError=e;console.warn(e)}
  }
