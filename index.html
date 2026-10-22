@@ -46,7 +46,7 @@
 @media (orientation:landscape) and (max-height:500px){#minimap{top:8px;right:8px;width:104px;height:104px}.actions{margin-top:108px}.actions button{min-height:40px}.actions .fire{width:56px;height:56px}#controls{align-items:flex-end}.top{max-width:calc(100% - 125px)}#mission{max-width:180px}}
 </style></head><body>
 <div id="rotateNotice"><div class="rotateCard"><span class="rotateIcon">📱</span><h2>VIRE O CELULAR</h2><p>Operação Himalaia foi feito para jogar na horizontal. Gire seu iPhone para continuar.</p></div></div>
-<div id="start"><div class="panel"><div style="font-size:30px">🏔️</div><h1>OPERAÇÃO HIMALAIA 3D</h1><p class="note">Carregando o jogo…</p></div></div>
+<div id="start"><div class="panel"><div style="font-size:30px">🏔️</div><h1>OPERAÇÃO HIMALAIA 3D</h1><p class="note">Preparando o cenário 3D…</p><button class="main" id="startbtn" type="button">INICIAR JOGO</button></div></div>
 <div id="pause"><div class="panel"><h1>PAUSADO</h1><button class="main" id="resume">CONTINUAR</button><button id="restart">REINICIAR MISSÃO</button><button id="menu">MENU PRINCIPAL</button></div></div>
 <div id="dead"><div class="panel"><h1>VOCÊ FOI ELIMINADO</h1><p>Reagrupe e tente novamente.</p><button class="main" id="retry">REINICIAR MISSÃO</button><button id="deadmenu">MENU PRINCIPAL</button></div></div>
 <div id="win"><div class="panel"><h1>MISSÃO CONCLUÍDA</h1><p>Documentos secretos recuperados. A operação foi um sucesso.</p><button class="main" id="next">JOGAR NOVAMENTE</button><button id="winmenu">MENU PRINCIPAL</button></div></div>
@@ -330,31 +330,39 @@ function launchGame(){try{init();if(renderer){started=true;$('start').style.disp
 async function loadThreeFallback(){
  const panel=$('start'),note=panel.querySelector('p.note');
  panel.style.display='flex';
- if(note)note.textContent='Carregando o motor gráfico 3D…';
- const sources=[
-  'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js',
-  'https://unpkg.com/three@0.159.0/build/three.min.js'
+ if(note)note.textContent='Carregando motor 3D…';
+ const moduleSources=[
+  'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js',
+  'https://unpkg.com/three@0.159.0/build/three.module.js',
+  'https://esm.sh/three@0.159.0'
  ];
  let lastError=null;
- for(const src of sources){
+ for(const src of moduleSources){
   try{
-   if(src.includes('three.min.js')){
-    await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=()=>{script.remove();reject(new Error('Falha ao baixar Three.js em '+src))};document.head.appendChild(script)});
-   }else{const mod=await import(src);window.THREE=mod;}
-   if(!window.THREE||!window.THREE.WebGLRenderer)throw new Error('Biblioteca 3D incompleta');
+   const mod=await Promise.race([import(src),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Tempo esgotado ao baixar motor 3D')),12000))]);
+   if(!mod||!mod.WebGLRenderer)throw new Error('Biblioteca 3D inválida');
+   window.THREE=mod;
+   renderer=null;
    init();
-   if(renderer){
-    started=true;
-    $('start').style.display='none';
-    clock.start();
-    loop();
-    return;
-   }
-   throw new Error('Não foi possível criar o renderizador WebGL');
-  }catch(e){lastError=e;console.warn('Falha ao carregar 3D:',src,e)}
+   if(!renderer)throw new Error('Renderizador 3D não criado');
+   started=true;paused=false;dead=false;won=false;
+   panel.style.display='none';
+   if(!clock)clock=new THREE.Clock();
+   clock.start();loop();
+   if(note)note.textContent='Jogo iniciado';
+   return;
+  }catch(e){lastError=e;console.warn('Falha no motor 3D',src,e)}
  }
- showLoadError('Falha ao carregar o motor 3D: '+(lastError&&lastError.message?lastError.message:'biblioteca indisponível')+'. Toque em TENTAR CARREGAR 3D para repetir.');
+ showLoadError('Não foi possível carregar o motor 3D. Verifique a internet e tente novamente. Detalhe: '+(lastError&&lastError.message?lastError.message:'falha desconhecida'));
 }
+function showLoadError(detail){
+ const panel=$('start');panel.style.display='flex';
+ const note=panel.querySelector('p.note');if(note)note.textContent=detail||'Falha ao carregar o jogo.';
+ let retry=$('loadretry');
+ if(!retry){retry=document.createElement('button');retry.id='loadretry';retry.className='main';retry.textContent='TENTAR NOVAMENTE';panel.querySelector('.panel').appendChild(retry)}
+ retry.onclick=()=>{retry.disabled=true;retry.textContent='CARREGANDO…';loadThreeFallback().finally(()=>{retry.disabled=false;retry.textContent='TENTAR NOVAMENTE'})};
+}
+
 try{loadThreeFallback()}catch(e){console.error(e);showLoadError()}
 })();
 </script></body></html>
