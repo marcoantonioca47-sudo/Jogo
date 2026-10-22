@@ -42,7 +42,9 @@
  .actions .fire{width:58px;height:58px;font-size:10px}
  .actions .wide{min-height:32px}
  .smallrow button{padding:6px 7px;font-size:9px}
-}#minimap{position:absolute;right:10px;top:calc(env(safe-area-inset-top) + 12px);width:116px;height:116px;border:2px solid #d9edaa;border-radius:50%;overflow:hidden;background:#07110ddd;box-shadow:0 2px 12px #0009;z-index:4;pointer-events:none}#mapcanvas{width:100%;height:100%;display:block}#minimap span{position:absolute;top:3px;left:50%;transform:translateX(-50%);font-size:10px;color:#f5ffdb;text-shadow:0 1px 3px #000}@media(min-width:800px){#minimap{width:150px;height:150px;right:18px;top:18px}}</style></head><body>
+}#minimap{position:absolute;right:10px;top:calc(env(safe-area-inset-top) + 12px);width:116px;height:116px;border:2px solid #d9edaa;border-radius:50%;overflow:hidden;background:#07110ddd;box-shadow:0 2px 12px #0009;z-index:4;pointer-events:none}#mapcanvas{width:100%;height:100%;display:block}#minimap span{position:absolute;top:3px;left:50%;transform:translateX(-50%);font-size:10px;color:#f5ffdb;text-shadow:0 1px 3px #000}@media(min-width:800px){#minimap{width:150px;height:150px;right:18px;top:18px}}/* Ajustes de visibilidade e HUD para iPhone em paisagem */
+@media (orientation:landscape) and (max-height:500px){#minimap{top:8px;right:8px;width:104px;height:104px}.actions{margin-top:108px}.actions button{min-height:40px}.actions .fire{width:56px;height:56px}#controls{align-items:flex-end}.top{max-width:calc(100% - 125px)}#mission{max-width:180px}}
+</style></head><body>
 <div id="rotateNotice"><div class="rotateCard"><span class="rotateIcon">📱</span><h2>VIRE O CELULAR</h2><p>Operação Himalaia foi feito para jogar na horizontal. Gire seu iPhone para continuar.</p></div></div>
 <div id="start"><div class="panel"><div style="font-size:30px">🏔️</div><h1>OPERAÇÃO HIMALAIA 3D</h1><p class="note">Carregando o jogo…</p></div></div>
 <div id="pause"><div class="panel"><h1>PAUSADO</h1><button class="main" id="resume">CONTINUAR</button><button id="restart">REINICIAR MISSÃO</button><button id="menu">MENU PRINCIPAL</button></div></div>
@@ -106,7 +108,7 @@ function makeEnemyJeep(x,z){
  const barrel=box(0,2.02,-.02,.12,.12,.8,dark,g);
  g.position.set(x,0,z);scene.add(g);return {g,shot:0,active:false,barrel};
 }
-function buildWorld(){scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb8c2);scene.fog=new THREE.Fog(0x9bb8c2,35,150);
+function buildWorld(){scene=new THREE.Scene();scene.background=new THREE.Color(0xb8cbd0);scene.fog=new THREE.Fog(0xb8cbd0,55,210);
 // Neve em partículas leves, centradas no jogador para funcionar bem no celular
 const snowCount=420,snowGeo=new THREE.BufferGeometry(),snowPos=new Float32Array(snowCount*3);
 snowX=[];snowY=[];snowZ=[];
@@ -114,7 +116,7 @@ for(let i=0;i<snowCount;i++){snowX.push((Math.random()-.5)*58);snowY.push(Math.r
 snowGeo.setAttribute('position',new THREE.BufferAttribute(snowPos,3));
 snowField=new THREE.Points(snowGeo,new THREE.PointsMaterial({color:0xf3f7f7,size:.105,transparent:true,opacity:.78,depthWrite:false,sizeAttenuation:true}));
 scene.add(snowField);
-scene.add(new THREE.HemisphereLight(0xdcecff,0x343b32,1.65));const sun=new THREE.DirectionalLight(0xfff0d5,2.4);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xeaf6ff,0x52604c,2.15));const sun=new THREE.DirectionalLight(0xfff5df,3.0);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(768,768);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;sun.shadow.bias=-0.00015;scene.add(sun);const fillLight=new THREE.DirectionalLight(0xc7e2ff,0.85);fillLight.position.set(28,18,-24);scene.add(fillLight);
 // Terreno com variação de cor para quebrar o aspecto artificial
 const groundGeo=new THREE.PlaneGeometry(220,220,70,70);groundGeo.rotateX(-Math.PI/2);
 const pos=groundGeo.attributes.position,colors=[];
