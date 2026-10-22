@@ -54,7 +54,7 @@
 
 <script>
 (()=>{'use strict';
-const GAME_BUILD='2026-10-22-fix-THREE-3';
+const GAME_BUILD='2026-10-22-fix-THREE-4';
 window.__OPH_BUILD__=GAME_BUILD;
 window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='BUILD '+GAME_BUILD+' | ERRO: '+(e.message||'falha JavaScript')+' (linha '+(e.lineno||'?')+')';});
 window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
@@ -100,7 +100,7 @@ function rock(x,z,s=1){
 function makeGroundTexture(){
  const c=document.createElement('canvas');c.width=c.height=512;const ctx=c.getContext('2d');ctx.fillStyle='#6b765d';ctx.fillRect(0,0,512,512);
  for(let i=0;i<6500;i++){const x=Math.random()*512,y=Math.random()*512,r=1+Math.random()*7;ctx.fillStyle=Math.random()>.5?'rgba(36,52,39,.22)':'rgba(208,208,183,.17)';ctx.beginPath();ctx.ellipse(x,y,r,r*.45,Math.random()*3,0,Math.PI*2);ctx.fill()}
- const tex=new window.THREE.CanvasTexture(c);tex.wrapS=tex.wrapT=window.THREE.RepeatWrapping;tex.repeat.set(18,18);tex.colorSpace=window.THREE.SRGBColorSpace;tex.anisotropy=4;return tex;
+ const tex=new window.THREE.Texture(c);tex.needsUpdate=true;tex.wrapS=tex.wrapT=window.THREE.RepeatWrapping;tex.repeat.set(18,18);tex.colorSpace=window.THREE.SRGBColorSpace;tex.anisotropy=4;return tex;
 }
 function makeEnemyJeep(x,z){
  const g=new window.THREE.Group(),green=mat(0x3d4934),dark=mat(0x202321),glass=mat(0x718b8c,.35);
