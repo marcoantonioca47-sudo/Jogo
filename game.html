@@ -44,6 +44,26 @@
  .smallrow button{padding:6px 7px;font-size:9px}
 }#minimap{position:absolute;right:10px;top:calc(env(safe-area-inset-top) + 12px);width:116px;height:116px;border:2px solid #d9edaa;border-radius:50%;overflow:hidden;background:#07110ddd;box-shadow:0 2px 12px #0009;z-index:4;pointer-events:none}#mapcanvas{width:100%;height:100%;display:block}#minimap span{position:absolute;top:3px;left:50%;transform:translateX(-50%);font-size:10px;color:#f5ffdb;text-shadow:0 1px 3px #000}@media(min-width:800px){#minimap{width:150px;height:150px;right:18px;top:18px}}/* Ajustes de visibilidade e HUD para iPhone em paisagem */
 @media (orientation:landscape) and (max-height:500px){#minimap{top:8px;right:8px;width:104px;height:104px}.actions{margin-top:108px}.actions button{min-height:40px}.actions .fire{width:56px;height:56px}#controls{align-items:flex-end}.top{max-width:calc(100% - 125px)}#mission{max-width:180px}}
+
+/* Layout de controles mobile inspirado em battle royale, com botões circulares e zonas de toque maiores */
+#controls{left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom) + 8px);align-items:flex-end;pointer-events:none}
+#controls>div:first-child{pointer-events:auto;flex:0 0 auto}
+.stick{width:118px;height:118px;border:2px solid #e8f4dc70;background:radial-gradient(circle,#aabca52b,#07110d80 70%);box-shadow:inset 0 0 0 8px #ffffff08,0 3px 12px #0008}
+.knob{left:35px;top:35px;width:44px;height:44px;background:linear-gradient(145deg,#dce8d1d9,#6c8066d9);border:2px solid #f7fff0b8;box-shadow:0 2px 8px #0009}
+.smallrow{gap:6px;margin-top:5px}.smallrow button{border-radius:18px!important;background:#18251fd9!important;border:1px solid #d5e3c65c!important;font-size:9px!important;padding:7px 8px!important;min-height:30px!important}
+.actions{pointer-events:auto;display:grid;grid-template-columns:repeat(3,58px);grid-auto-rows:52px;gap:5px;align-items:center;justify-items:center;margin:0 0 0 8px;max-width:190px}
+.actions button{width:50px;min-width:50px;min-height:46px;height:46px;padding:4px 2px;border-radius:50%!important;background:linear-gradient(145deg,#293b32e8,#0b1714e8)!important;border:1.5px solid #e7f2d68c!important;color:#f3f7e9!important;font-size:9px!important;font-weight:800;text-shadow:0 1px 3px #000;box-shadow:0 2px 7px #0008;touch-action:manipulation;line-height:1.05}
+.actions button:active,.smallrow button:active{transform:scale(.94);filter:brightness(1.35)}
+.actions #fire{width:66px;height:66px;min-width:66px;min-height:66px;border:2px solid #ffd7b7!important;background:radial-gradient(circle at 35% 30%,#ff9a68,#bd3929 68%,#651b18)!important;font-size:11px!important;box-shadow:0 0 0 4px #ffb18c2b,0 3px 12px #000b}
+.actions #aim{background:linear-gradient(145deg,#526d58ed,#1c3025ed)!important}
+.actions #jump{background:linear-gradient(145deg,#647c8bed,#253b4bed)!important}
+.actions #reload{background:linear-gradient(145deg,#8a7948ed,#40371fed)!important}
+.actions #switch{font-size:8px!important}
+.actions .wide{grid-column:span 3;width:100%;height:29px;min-height:29px;border-radius:16px!important}
+.actions #steerLeft,.actions #steerRight{border-radius:22px!important;width:54px}
+#lookzone{right:0;top:90px;bottom:160px;width:55%;z-index:2;touch-action:none}
+@media(max-height:420px){.stick{width:94px;height:94px}.knob{left:26px;top:26px;width:38px;height:38px}.actions{grid-template-columns:repeat(3,48px);grid-auto-rows:43px;gap:3px}.actions button{width:43px;min-width:43px;height:41px;min-height:41px;font-size:8px!important}.actions #fire{width:56px;min-width:56px;height:56px;min-height:56px}.actions .wide{width:100%;height:25px;min-height:25px}#controls{bottom:5px}}
+@media(min-width:800px){.actions{grid-template-columns:repeat(3,64px);grid-auto-rows:56px;max-width:205px}.actions button{width:54px;min-width:54px;height:50px;min-height:50px}.actions #fire{width:68px;min-width:68px;height:68px;min-height:68px}.stick{width:130px;height:130px}.knob{left:40px;top:40px}}
 </style></head><body>
 <div id="rotateNotice"><div class="rotateCard"><span class="rotateIcon">📱</span><h2>VIRE O CELULAR</h2><p>Operação Himalaia foi feito para jogar na horizontal. Gire seu iPhone para continuar.</p></div></div>
 <div id="start"><div class="panel"><div style="font-size:30px">🏔️</div><h1>OPERAÇÃO HIMALAIA 3D</h1><p class="note">Preparando o cenário 3D…</p><button class="main" id="startbtn" type="button">INICIAR JOGO</button></div></div>
@@ -54,7 +74,7 @@
 
 <script>
 (()=>{'use strict';
-const GAME_BUILD='2026-10-22-freefire-mechanics-11';
+const GAME_BUILD='2026-10-22-freefire-controls-12';
 window.__OPH_BUILD__=GAME_BUILD;
 window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='BUILD '+GAME_BUILD+' | ERRO: '+(e.message||'falha JavaScript')+' (linha '+(e.lineno||'?')+')';});
 window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
