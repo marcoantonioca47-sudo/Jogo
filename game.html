@@ -64,6 +64,31 @@
 #lookzone{right:0;top:90px;bottom:160px;width:55%;z-index:2;touch-action:none}
 @media(max-height:420px){.stick{width:94px;height:94px}.knob{left:26px;top:26px;width:38px;height:38px}.actions{grid-template-columns:repeat(3,48px);grid-auto-rows:43px;gap:3px}.actions button{width:43px;min-width:43px;height:41px;min-height:41px;font-size:8px!important}.actions #fire{width:56px;min-width:56px;height:56px;min-height:56px}.actions .wide{width:100%;height:25px;min-height:25px}#controls{bottom:5px}}
 @media(min-width:800px){.actions{grid-template-columns:repeat(3,64px);grid-auto-rows:56px;max-width:205px}.actions button{width:54px;min-width:54px;height:50px;min-height:50px}.actions #fire{width:68px;min-width:68px;height:68px;min-height:68px}.stick{width:130px;height:130px}.knob{left:40px;top:40px}}
+
+/* HUD reposicionado conforme a referência enviada: joystick inferior esquerdo e ações distribuídas na borda direita */
+#controls{position:absolute!important;inset:0!important;left:0!important;right:0!important;bottom:0!important;height:100%!important;display:block!important;padding:0!important;pointer-events:none!important;z-index:6!important}
+#controls>div:first-child{position:absolute;left:5.5%;bottom:8%;display:flex;flex-direction:column;align-items:center;pointer-events:auto}
+.stick{width:clamp(88px,13vw,126px);height:clamp(88px,13vw,126px);border:1px solid #ffffff55;background:#0a120c22;box-shadow:inset 0 0 0 1px #ffffff12;backdrop-filter:blur(1px)}
+.knob{width:42%;height:42%;left:29%;top:29%;background:#c6d3c54d;border:1px solid #ffffff55;box-shadow:none}
+.smallrow{display:none!important}
+.actions{position:absolute;inset:0;display:block!important;margin:0!important;max-width:none!important;pointer-events:none!important}
+.actions button{position:absolute;width:clamp(40px,5.7vw,58px)!important;min-width:0!important;height:clamp(40px,5.7vw,58px)!important;min-height:0!important;padding:3px!important;border-radius:50%!important;background:#26302b75!important;border:1px solid #ffffff42!important;color:#fff!important;font-size:clamp(8px,1.05vw,11px)!important;font-weight:600!important;box-shadow:0 1px 4px #0005!important;text-shadow:0 1px 2px #000;line-height:1.05!important;pointer-events:auto!important;backdrop-filter:blur(2px);touch-action:manipulation}
+.actions #fire{right:19%;bottom:11%;width:clamp(60px,8.5vw,84px)!important;height:clamp(60px,8.5vw,84px)!important;background:#e8e9e544!important;border:1px solid #ffffff88!important;font-size:11px!important;box-shadow:0 0 0 5px #ffffff0b!important}
+.actions #aim{right:2.5%;bottom:35%;background:#d8e1d22e!important}
+.actions #jump{right:2.5%;bottom:16%;background:#d8e1d22e!important}
+.actions #reload{right:10%;top:16%;}
+.actions #switch{right:2.5%;top:16%;}
+.actions #grenade{right:13%;bottom:28%;}
+.actions #jeep{right:24%;bottom:3%;}
+.actions #savegame{right:12%;bottom:3%;}
+.actions #interact{right:26%;bottom:29%;}
+.actions #pausebtn{right:2%;top:3%;width:42px!important;height:30px!important;border-radius:6px!important}
+.actions #crouch{display:none!important}
+.actions .wide{width:42px!important;height:30px!important;min-height:0!important}
+.actions #steerLeft{right:30%;bottom:20%;}.actions #steerRight{right:22%;bottom:20%;}
+#lookzone{left:31%;right:30%;top:12%;bottom:15%;width:auto!important;z-index:2!important;touch-action:none}
+@media(max-height:500px){#controls>div:first-child{left:5%;bottom:8%}.actions #fire{right:19%;bottom:10%}.actions #aim{right:2%;bottom:35%}.actions #jump{right:2%;bottom:15%}.actions #reload{right:10%;top:15%}.actions #switch{right:2%;top:15%}}
+@media(max-width:600px){#controls>div:first-child{left:4%;bottom:10%}.stick{width:94px;height:94px}.actions button{font-size:8px!important}.actions #fire{right:18%;bottom:11%;width:62px!important;height:62px!important}.actions #aim{right:2%;bottom:34%}.actions #jump{right:2%;bottom:15%}.actions #grenade{right:12%;bottom:27%}.actions #interact{right:26%;bottom:29%}}
 </style></head><body>
 <div id="rotateNotice"><div class="rotateCard"><span class="rotateIcon">📱</span><h2>VIRE O CELULAR</h2><p>Operação Himalaia foi feito para jogar na horizontal. Gire seu iPhone para continuar.</p></div></div>
 <div id="start"><div class="panel"><div style="font-size:30px">🏔️</div><h1>OPERAÇÃO HIMALAIA 3D</h1><p class="note">Preparando o cenário 3D…</p><button class="main" id="startbtn" type="button">INICIAR JOGO</button></div></div>
@@ -74,7 +99,7 @@
 
 <script>
 (()=>{'use strict';
-const GAME_BUILD='2026-10-22-freefire-controls-12';
+const GAME_BUILD='2026-10-22-freefire-hud-13';
 window.__OPH_BUILD__=GAME_BUILD;
 window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='BUILD '+GAME_BUILD+' | ERRO: '+(e.message||'falha JavaScript')+' (linha '+(e.lineno||'?')+')';});
 window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
