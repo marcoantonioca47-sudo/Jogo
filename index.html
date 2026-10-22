@@ -54,7 +54,9 @@
 
 <script>
 (()=>{'use strict';
-window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO DO JOGO: '+(e.message||'falha JavaScript')+' ('+(e.lineno||'?')+')';});
+const GAME_BUILD='2026-10-22-fix-THREE-2';
+window.__OPH_BUILD__=GAME_BUILD;
+window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='BUILD '+GAME_BUILD+' | ERRO: '+(e.message||'falha JavaScript')+' (linha '+(e.lineno||'?')+')';});
 window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
 
 const $=id=>document.getElementById(id);let renderer,scene,camera,clock,player,body,head,gun,snowField,snowX=[],snowY=[],snowZ=[],world=[],enemies=[],items=[],keys={},started=false,paused=false,dead=false,won=false,hp=100,ammo=12,reserve=48,kills=0,weapon=0,aiming=false,crouching=false,sprinting=false,autoRun=false,joy={x:0,y:0},yaw=0,pitch=-.15,fireWait=0,enemyWait=0,missionStep=0,docs=null,toastTimer;
@@ -334,11 +336,11 @@ async function loadThreeFallback(){
  const panel=$('start'),note=panel.querySelector('p.note');
  panel.style.display='flex';
  if(note)note.textContent='Carregando motor 3D…';
- const sources=['https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js','https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js','https://unpkg.com/three@0.128.0/build/three.min.js'];
+ const sources=['https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js','https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js','https://unpkg.com/three@0.160.0/build/three.min.js'];
  let lastError=null;
  for(const src of sources){
   try{
-   if(window.THREE&&window.THREE.WebGLRenderer){window.THREE=window.THREE;startThreeGame();return}
+   if(window.THREE&&window.THREE.WebGLRenderer){startThreeGame();return}
    await new Promise((resolve,reject)=>{
     const script=document.createElement('script');let done=false;
     const finish=(err)=>{if(done)return;done=true;clearTimeout(timer);if(err)reject(err);else resolve()};
@@ -348,16 +350,13 @@ async function loadThreeFallback(){
     script.onerror=()=>finish(new Error('Falha ao baixar '+src));
     document.head.appendChild(script);
    });
-   window.THREE=window.THREE;
    startThreeGame();return;
   }catch(e){lastError=e;console.warn(e)}
  }
  showLoadError('Não foi possível baixar o motor 3D. Erro: '+(lastError&&lastError.message?lastError.message:'desconhecido'));
 }
 function startThreeGame(){
- if(!window.THREE)throw new Error('Motor 3D indisponível');
- window.THREE=window.THREE;
- window.THREE=window.THREE;
+ if(!window.THREE||!window.THREE.WebGLRenderer)throw new Error('Three.js não carregou; BUILD '+GAME_BUILD);
  renderer=null;
  init();
  if(!renderer)throw new Error('O renderizador não foi criado');
