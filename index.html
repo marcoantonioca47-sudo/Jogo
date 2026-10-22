@@ -360,6 +360,7 @@ async function loadThreeFallback(){
 function startThreeGame(){
  if(!window.THREE)throw new Error('Motor 3D indisponível');
  THREE=window.THREE;
+ window.THREE=THREE;
  renderer=null;
  init();
  if(!renderer)throw new Error('O renderizador não foi criado');
