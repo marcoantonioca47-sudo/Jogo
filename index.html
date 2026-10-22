@@ -363,6 +363,28 @@ function showLoadError(detail){
  retry.onclick=()=>{retry.disabled=true;retry.textContent='CARREGANDO…';loadThreeFallback().finally(()=>{retry.disabled=false;retry.textContent='TENTAR NOVAMENTE'})};
 }
 
-try{loadThreeFallback()}catch(e){console.error(e);showLoadError()}
+const startButton=$('startbtn');
+if(startButton){
+ startButton.addEventListener('click',async()=>{
+  if(startButton.disabled)return;
+  startButton.disabled=true;
+  startButton.textContent='CARREGANDO JOGO…';
+  try{
+   if(renderer){
+    $('start').style.display='none';
+    if(!started){started=true;paused=false;dead=false;won=false;if(!clock)clock=new THREE.Clock();clock.start();loop()}
+    const restored=loadGame();if(restored)say('Progresso anterior carregado.');
+   }else{
+    await loadThreeFallback();
+   }
+  }catch(e){
+   console.error(e);
+   showLoadError('Não foi possível iniciar: '+(e&&e.message?e.message:'erro desconhecido')+'. Toque em TENTAR NOVAMENTE.');
+  }finally{
+   startButton.disabled=false;
+   startButton.textContent='INICIAR JOGO';
+  }
+ });
+}
 })();
 </script></body></html>
