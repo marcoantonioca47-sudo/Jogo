@@ -129,9 +129,54 @@ for(let i=0;i<34;i++){
  }
  scene.add(g);
 }
-// acampamento
-for(let i=0;i<7;i++){let x=13+(i%3)*5,z=-30-Math.floor(i/3)*6;box(x,1.4,z,3,2.8,3,mat(i%2?0x6d6b53:0x756c55));const roof=new THREE.Mesh(new THREE.ConeGeometry(2.5,1.2,4),mat(0x3d493b));roof.position.set(x,3.3,z);roof.rotation.y=Math.PI/4;scene.add(roof)}
-for(let i=0;i<5;i++){let x=10+(i%3)*7,z=-25-Math.floor(i/3)*9;box(x,2.5,z,1.3,5,1.3,mat(0x514d3b));box(x,5.1,z,2.1,.25,2.1,mat(0x9e9c72))}
+// Cabines de montanha com paredes, telhado inclinado, janelas, porta e chaminé
+function makeCabin(x,z,scale=1){
+ const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);
+ const wood=mat(0x5c4937),woodDark=mat(0x352d25),roofMat=mat(0x343d3a),snowMat=mat(0xe1e8e6),glass= new THREE.MeshStandardMaterial({color:0x8eb6c2,emissive:0x263f47,roughness:.3});
+ box(0,1.15,0,3.8,2.3,3.2,wood,g);
+ // telhado de duas águas
+ const side1=box(-.98,2.65,0,2.35,.18,3.7,roofMat,g);side1.rotation.z=-.42;
+ const side2=box(.98,2.65,0,2.35,.18,3.7,roofMat,g);side2.rotation.z=.42;
+ const snow1=box(-.98,2.76,0,2.25,.07,3.72,snowMat,g);snow1.rotation.z=-.42;
+ const snow2=box(.98,2.76,0,2.25,.07,3.72,snowMat,g);snow2.rotation.z=.42;
+ box(0,3.12,0,.12,.14,3.72,woodDark,g);
+ box(0,.82,-1.64,.72,1.64,.08,woodDark,g);
+ box(0,.82,-1.70,.56,1.45,.04,wood,g);
+ for(const wx of [-1.12,1.12]){box(wx,1.65,-1.66,.62,.65,.08,woodDark,g);box(wx,1.65,-1.71,.48,.51,.04,glass,g);box(wx,1.65,-1.74,.06,.58,.03,woodDark,g);box(wx,1.65,-1.75,.52,.05,.03,woodDark,g)}
+ const chimney=box(1.1,3.05,.75,.35,1,.38,woodDark,g);box(1.1,3.58,.75,.5,.12,.5,snowMat,g);
+ for(let i=0;i<5;i++)box(-1.3+i*.65,.22,-1.7,.42,.1,.08,woodDark,g);
+ scene.add(g);return g;
+}
+for(let i=0;i<3;i++)makeCabin(-38+i*8,-17-(i%2)*5,.9);
+// Base inimiga: edifícios modulares, telhados, janelas, sacos de areia, caixas e refletores
+function makeBuilding(x,z,w,d,h,wallColor=0x555c50){
+ const g=new THREE.Group();g.position.set(x,0,z);const wall=mat(wallColor),dark=mat(0x29312d),roof=mat(0x343d38),windowMat=new THREE.MeshStandardMaterial({color:0x8da8a7,roughness:.5,metalness:.1});
+ box(0,h/2,0,w,h,d,wall,g);box(0,h+.08,0,w+.5,.16,d+.5,roof,g);
+ for(let wx=-w/2+.8;wx<w/2-.3;wx+=1.5){box(wx,h*.65,-d/2-.025,.7,.65,.06,dark,g);box(wx,h*.65,-d/2-.065,.56,.5,.025,windowMat,g)}
+ box(0,.95,-d/2-.07,.9,1.9,.08,dark,g);box(0,.9,-d/2-.12,.65,1.65,.04,wall,g);
+ for(let i=0;i<4;i++){const crate=box((i-1.5)*.65,.38,d/2+.55,.55,.75,.55,mat(i%2?0x6b593d:0x514735),g);crate.rotation.y=i*.18}
+ scene.add(g);return g;
+}
+makeBuilding(14,-30,5,4,3,0x555e51);makeBuilding(22,-31,4,4,2.6,0x625c49);makeBuilding(14,-38,4.5,3.5,2.8,0x4d594e);
+function makeSandbag(x,z,count=5){
+ for(let i=0;i<count;i++){const bag=new THREE.Mesh(new THREE.SphereGeometry(.38,8,6),mat(0x827b60));bag.scale.set(1.3,.65,.7);bag.position.set(x+i*.65,.32,z);scene.add(bag)}
+}
+makeSandbag(9,-34,7);makeSandbag(18,-41,7);makeSandbag(26,-35,5);
+// Caixas de suprimentos e gerador
+for(let i=0;i<5;i++){const c=box(8+(i%3)*1.1,.45,-25-Math.floor(i/3)*1.1,.85,.9,.85,mat(i%2?0x6d6047:0x4d5747));box(8+(i%3)*1.1,.93,-25-Math.floor(i/3)*1.1,.9,.08,.9,mat(0x29332d))}
+const gen=box(27,.7,-27,1.2,1.4,.9,mat(0x353e3a));box(27,1.45,-27,1.3,.12,1,mat(0x222925));
+for(let i=0;i<4;i++){const pole=box(7+i*7,3,-40,.12,6,.12,mat(0x444b43));box(7+i*7,6.1,-40,.35,.18,.35,mat(0x303731));const lamp=new THREE.Mesh(new THREE.BoxGeometry(.45,.15,.35),new THREE.MeshStandardMaterial({color:0xf2df9e,emissive:0x66502a}));lamp.position.set(7+i*7,5.95,-40);scene.add(lamp)}
+// Torre de vigia reforçada e escada
+function makeWatchTower(x,z){
+ const g=new THREE.Group();g.position.set(x,0,z);const steel=mat(0x4a514b),deck=mat(0x574b39);
+ for(const px of [-1.25,1.25])for(const pz of [-1.25,1.25]){const leg=box(px,2.4,pz,.16,4.8,.16,steel,g);leg.rotation.z=px*.08;box(px*.65,1.6,pz,.12,.12,2.6,steel,g)}
+ box(0,4.8,0,3.2,.22,3.2,deck,g);box(0,6.5,0,3.6,.16,3.6,roof,g);
+ for(const px of [-1.4,1.4])box(px,5.25,0,.12,.8,3,steel,g);
+ for(let i=0;i<7;i++){const step=box(-1.25+i*.34,.4+i*.58,-1.5,.65,.09,.12,deck,g);step.rotation.z=-.2}
+ scene.add(g)
+}
+makeWatchTower(-52,-62);makeWatchTower(48,-62);
+// Bandeira e postes da base
 const flag=box(23,1,-38,.1,4,.1,mat(0x333a30));box(23.7,2.5,-38,1.4,.7,.05,mat(0x8e4639));
 // Personagem com uniforme em camadas, colete, bolsos, mochila e botas
 function makeSoldier(uniformColor,enemy=false){
