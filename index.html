@@ -108,7 +108,7 @@ function makeEnemyJeep(x,z){
  const barrel=box(0,2.02,-.02,.12,.12,.8,dark,g);
  g.position.set(x,0,z);scene.add(g);return {g,shot:0,active:false,barrel};
 }
-function buildWorld(){scene=new THREE.Scene();scene.background=new THREE.Color(0xb8cbd0);scene.fog=new THREE.Fog(0xb8cbd0,55,210);
+function buildWorld(){scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb8c2);scene.fog=new THREE.Fog(0x9bb8c2,35,150);
 // Neve em partículas leves, centradas no jogador para funcionar bem no celular
 const snowCount=420,snowGeo=new THREE.BufferGeometry(),snowPos=new Float32Array(snowCount*3);
 snowX=[];snowY=[];snowZ=[];
@@ -116,7 +116,7 @@ for(let i=0;i<snowCount;i++){snowX.push((Math.random()-.5)*58);snowY.push(Math.r
 snowGeo.setAttribute('position',new THREE.BufferAttribute(snowPos,3));
 snowField=new THREE.Points(snowGeo,new THREE.PointsMaterial({color:0xf3f7f7,size:.105,transparent:true,opacity:.78,depthWrite:false,sizeAttenuation:true}));
 scene.add(snowField);
-scene.add(new THREE.HemisphereLight(0xeaf6ff,0x52604c,2.15));const sun=new THREE.DirectionalLight(0xfff5df,3.0);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(768,768);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;sun.shadow.bias=-0.00015;scene.add(sun);const fillLight=new THREE.DirectionalLight(0xc7e2ff,0.85);fillLight.position.set(28,18,-24);scene.add(fillLight);
+scene.add(new THREE.HemisphereLight(0xdcecff,0x343b32,1.65));const sun=new THREE.DirectionalLight(0xfff0d5,2.4);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;scene.add(sun);
 // Terreno com variação de cor para quebrar o aspecto artificial
 const groundGeo=new THREE.PlaneGeometry(220,220,70,70);groundGeo.rotateX(-Math.PI/2);
 const pos=groundGeo.attributes.position,colors=[];
