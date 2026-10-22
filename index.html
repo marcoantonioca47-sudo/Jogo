@@ -20,7 +20,30 @@
 #cross{color:#e9f4d7;text-shadow:0 0 4px #000;font-weight:900}
 #toast{bottom:190px;border:1px solid #cde49a88}
 @media(max-width:390px){.stat{padding:6px;font-size:9px}.top{gap:4px}#mission{max-width:165px}.stick{width:105px;height:105px}.knob{left:29px;top:29px}.actions{grid-template-columns:repeat(2,60px)}.actions .fire{width:64px;height:64px}}
-</style></head><body>
+
+/* Orientação obrigatória: paisagem em celulares */
+#rotateNotice{display:none;position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at center,#263d32,#08110e 75%);color:#fff;align-items:center;justify-content:center;text-align:center;padding:24px}
+#rotateNotice .rotateCard{max-width:340px}
+#rotateNotice .rotateIcon{font-size:64px;display:block;animation:turnPhone 1.8s ease-in-out infinite}
+#rotateNotice h2{font-size:24px;margin:12px 0 8px;color:#d9edaa}
+#rotateNotice p{font-size:15px;line-height:1.5;color:#e4e9e5}
+@keyframes turnPhone{0%,100%{transform:rotate(0)}50%{transform:rotate(90deg)}}
+@media (orientation:portrait) and (max-width:900px){#rotateNotice{display:flex}#hud,#start,#pause,#dead,#win{visibility:hidden}}
+@media (orientation:landscape){#rotateNotice{display:none}}
+@media (orientation:landscape) and (max-height:500px){
+ .top{padding-top:calc(env(safe-area-inset-top) + 5px);padding-left:8px;padding-right:8px}
+ .stat{padding:5px 7px;font-size:10px}
+ #mission{top:58px;left:8px;padding:7px 9px;font-size:10px;max-width:190px}
+ #controls{bottom:calc(env(safe-area-inset-bottom) + 7px);left:8px;right:8px}
+ .stick{width:100px;height:100px}
+ .knob{left:27px;top:27px;width:42px;height:42px}
+ .actions{grid-template-columns:repeat(2,58px);gap:4px}
+ .actions button{min-height:42px;font-size:9px}
+ .actions .fire{width:58px;height:58px;font-size:10px}
+ .actions .wide{min-height:32px}
+ .smallrow button{padding:6px 7px;font-size:9px}
+}</style></head><body>
+<div id="rotateNotice"><div class="rotateCard"><span class="rotateIcon">📱</span><h2>VIRE O CELULAR</h2><p>Operação Himalaia foi feito para jogar na horizontal. Gire seu iPhone para continuar.</p></div></div>
 <div id="start"><div class="panel"><div style="font-size:30px">🏔️</div><h1>OPERAÇÃO HIMALAIA</h1><p class="note">Carregando o jogo…</p></div></div>
 <div id="pause"><div class="panel"><h1>PAUSADO</h1><button class="main" id="resume">CONTINUAR</button><button id="restart">REINICIAR MISSÃO</button><button id="menu">MENU PRINCIPAL</button></div></div>
 <div id="dead"><div class="panel"><h1>VOCÊ FOI ELIMINADO</h1><p>Reagrupe e tente novamente.</p><button class="main" id="retry">REINICIAR MISSÃO</button><button id="deadmenu">MENU PRINCIPAL</button></div></div>
