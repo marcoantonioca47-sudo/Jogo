@@ -54,6 +54,9 @@
 
 <script>
 (()=>{'use strict';
+window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO DO JOGO: '+(e.message||'falha JavaScript')+' ('+(e.lineno||'?')+')';});
+window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
+
 const $=id=>document.getElementById(id);let renderer,scene,camera,clock,player,body,head,gun,snowField,snowX=[],snowY=[],snowZ=[],world=[],enemies=[],items=[],keys={},started=false,paused=false,dead=false,won=false,hp=100,ammo=12,reserve=48,kills=0,weapon=0,aiming=false,crouching=false,sprinting=false,autoRun=false,joy={x:0,y:0},yaw=0,pitch=-.15,fireWait=0,enemyWait=0,missionStep=0,docs=null,toastTimer;
 const weaponNames=['PISTOLA','FUZIL'];const ammoMax=[12,30];let ammoLoaded=[12,30],ammoReserve=[48,120];
 let hitTimer,damageTimer,grenadeReady=true,jeepGroup=null,inJeep=false,reinforcements=[],mapTick=0,outpostCaptured=false,outpostMesh=null;function hitFeedback(){const c=$('cross');c.classList.add('hit');clearTimeout(hitTimer);hitTimer=setTimeout(()=>c.classList.remove('hit'),180)}function damageFeedback(){const f=$('damageflash');f.classList.add('active');clearTimeout(damageTimer);damageTimer=setTimeout(()=>f.classList.remove('active'),180)}
@@ -376,6 +379,7 @@ const startButton=$('startbtn');
 if(startButton){
  startButton.addEventListener('click',async()=>{
   if(startButton.disabled)return;
+  const status=$('start').querySelector('p.note');if(status)status.textContent='Toque recebido. Iniciando motor 3D…';
   startButton.disabled=true;
   startButton.textContent='CARREGANDO JOGO…';
   try{
