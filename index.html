@@ -54,7 +54,7 @@
 
 <script>
 (()=>{'use strict';
-const GAME_BUILD='2026-10-22-fix-THREE-2';
+const GAME_BUILD='2026-10-22-fix-THREE-3';
 window.__OPH_BUILD__=GAME_BUILD;
 window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='BUILD '+GAME_BUILD+' | ERRO: '+(e.message||'falha JavaScript')+' (linha '+(e.lineno||'?')+')';});
 window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
@@ -336,27 +336,31 @@ async function loadThreeFallback(){
  const panel=$('start'),note=panel.querySelector('p.note');
  panel.style.display='flex';
  if(note)note.textContent='Carregando motor 3D…';
- const sources=['https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js','https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js','https://unpkg.com/three@0.160.0/build/three.min.js'];
+ const sources=[
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js',
+  'https://unpkg.com/three@0.128.0/build/three.min.js'
+ ];
  let lastError=null;
  for(const src of sources){
   try{
-   if(window.THREE&&window.THREE.WebGLRenderer){startThreeGame();return}
+   if(window.THREE&&window.THREE.WebGLRenderer&&window.THREE.Texture){startThreeGame();return}
    await new Promise((resolve,reject)=>{
     const script=document.createElement('script');let done=false;
     const finish=(err)=>{if(done)return;done=true;clearTimeout(timer);if(err)reject(err);else resolve()};
-    const timer=setTimeout(()=>{script.remove();finish(new Error('Tempo esgotado: '+src))},10000);
-    script.src=src;script.async=true;
-    script.onload=()=>{if(window.THREE&&window.THREE.WebGLRenderer){window.THREE=window.THREE;finish()}else finish(new Error('Biblioteca sem WebGLRenderer'))};
-    script.onerror=()=>finish(new Error('Falha ao baixar '+src));
+    const timer=setTimeout(()=>{script.remove();finish(new Error('Tempo esgotado ao carregar biblioteca 3D'))},9000);
+    script.src=src+'?v=ophfix3';script.async=true;
+    script.onload=()=>{if(window.THREE&&window.THREE.WebGLRenderer&&window.THREE.Texture)finish();else finish(new Error('Biblioteca carregada sem classes 3D necessárias'))};
+    script.onerror=()=>finish(new Error('Falha de rede ao baixar biblioteca 3D'));
     document.head.appendChild(script);
    });
    startThreeGame();return;
-  }catch(e){lastError=e;console.warn(e)}
+  }catch(e){lastError=e;console.warn('Falha Three.js',src,e)}
  }
- showLoadError('Não foi possível baixar o motor 3D. Erro: '+(lastError&&lastError.message?lastError.message:'desconhecido'));
+ showLoadError('Não foi possível carregar o motor 3D. Verifique a conexão e toque em TENTAR NOVAMENTE. Detalhe: '+(lastError&&lastError.message?lastError.message:'erro desconhecido'));
 }
 function startThreeGame(){
- if(!window.THREE||!window.THREE.WebGLRenderer)throw new Error('Three.js não carregou; BUILD '+GAME_BUILD);
+ if(!window.THREE||!window.THREE.WebGLRenderer||!window.THREE.Texture)throw new Error('Biblioteca Three.js incompleta');
  renderer=null;
  init();
  if(!renderer)throw new Error('O renderizador não foi criado');
