@@ -104,8 +104,8 @@ for(let i=0;i<18;i++){const x=-27+(Math.random()-.5)*24,z=-30+(Math.random()-.5)
 for(let i=0;i<3;i++){
  const hx=-38+i*8,hz=-17-(i%2)*5;
  const cabin=box(hx,1.25,hz,4,2.5,3,mat(0x68503b));
- const roof=new THREE.Mesh(new THREE.ConeGeometry(3.1,1.7,4),mat(0xeff3f0));
- roof.position.set(hx,3.1,hz);roof.rotation.y=Math.PI/4;scene.add(roof);
+ const roofPart=new THREE.Mesh(new THREE.ConeGeometry(3.1,1.7,4),mat(0xeff3f0));
+ roofPart.position.set(hx,3.1,hz);roofPart.rotation.y=Math.PI/4;scene.add(roofPart);
  box(hx,0.8,hz-1.56,.8,1.4,.08,mat(0x382c23));
 }
 // REGIÃO 3: torre de observação na crista
@@ -150,8 +150,8 @@ function makeCabin(x,z,scale=1){
 for(let i=0;i<3;i++)makeCabin(-38+i*8,-17-(i%2)*5,.9);
 // Base inimiga: edifícios modulares, telhados, janelas, sacos de areia, caixas e refletores
 function makeBuilding(x,z,w,d,h,wallColor=0x555c50){
- const g=new THREE.Group();g.position.set(x,0,z);const wall=mat(wallColor),dark=mat(0x29312d),roof=mat(0x343d38),windowMat=new THREE.MeshStandardMaterial({color:0x8da8a7,roughness:.5,metalness:.1});
- box(0,h/2,0,w,h,d,wall,g);box(0,h+.08,0,w+.5,.16,d+.5,roof,g);
+ const g=new THREE.Group();g.position.set(x,0,z);const wall=mat(wallColor),dark=mat(0x29312d),roofPart=mat(0x343d38),windowMat=new THREE.MeshStandardMaterial({color:0x8da8a7,roughness:.5,metalness:.1});
+ box(0,h/2,0,w,h,d,wall,g);box(0,h+.08,0,w+.5,.16,d+.5,roofPart,g);
  for(let wx=-w/2+.8;wx<w/2-.3;wx+=1.5){box(wx,h*.65,-d/2-.025,.7,.65,.06,dark,g);box(wx,h*.65,-d/2-.065,.56,.5,.025,windowMat,g)}
  box(0,.95,-d/2-.07,.9,1.9,.08,dark,g);box(0,.9,-d/2-.12,.65,1.65,.04,wall,g);
  for(let i=0;i<4;i++){const crate=box((i-1.5)*.65,.38,d/2+.55,.55,.75,.55,mat(i%2?0x6b593d:0x514735),g);crate.rotation.y=i*.18}
