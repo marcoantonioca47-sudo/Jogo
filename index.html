@@ -332,16 +332,16 @@ async function loadThreeFallback(){
  panel.style.display='flex';
  if(note)note.textContent='Carregando o motor gráfico 3D…';
  const sources=[
-  'https://esm.sh/three@0.160.0',
-  'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js',
-  'https://unpkg.com/three@0.160.0/build/three.module.js'
+  'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js',
+  'https://unpkg.com/three@0.160.0/build/three.min.js'
  ];
  let lastError=null;
  for(const src of sources){
   try{
-   const mod=await import(src);
-   if(!mod||!mod.WebGLRenderer)throw new Error('Biblioteca 3D incompleta');
-   window.THREE=mod;
+   if(src.includes('three.min.js')){
+    await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=()=>reject(new Error('Não foi possível baixar a biblioteca 3D'));document.head.appendChild(script)});
+   }else{const mod=await import(src);window.THREE=mod;}
+   if(!window.THREE||!window.THREE.WebGLRenderer)throw new Error('Biblioteca 3D incompleta');
    init();
    if(renderer){
     started=true;
