@@ -358,7 +358,21 @@ if(player.userData.legs){player.userData.legs[0].rotation.x=Math.sin(gait)*.55*m
 const camDist=aiming?2.6:5.5;const shoulder=aiming?.62:0;const camTarget=new window.THREE.Vector3(player.position.x-Math.sin(yaw)*camDist+Math.cos(yaw)*shoulder,player.position.y+(aiming?2.05:(crouching?2.0:2.8)),player.position.z+Math.cos(yaw)*camDist+Math.sin(yaw)*shoulder);camera.position.lerp(camTarget,aiming?.32:.22);const look=new window.THREE.Vector3(player.position.x+Math.sin(yaw)*1.5+Math.cos(yaw)*shoulder,player.position.y+1.25+pitch*3,player.position.z-Math.cos(yaw)*8+Math.sin(yaw)*shoulder);camera.lookAt(look);
 // Reforços em jipes entram em combate quando o jogador invade a base
 for(const v of reinforcements){if(!v.g)continue;const d=v.g.position.distanceTo(player.position);if(missionStep>=1&&d<42)v.active=true;if(v.active&&d>5){const dir=new window.THREE.Vector3(player.position.x-v.g.position.x,0,player.position.z-v.g.position.z).normalize();v.g.position.addScaledVector(dir,dt*2.45);v.g.rotation.y=Math.atan2(dir.x,dir.z)}if(v.active&&d<17){v.shot+=dt;if(v.shot>1.65){v.shot=0;takeDamage(inJeep?2:5);damageFeedback();if(hp<=0){dead=true;$('dead').style.display='flex'}}}}
-enemyWait+=dt;for(const e of enemies){if(!e.alive)continue;const d=e.g.position.distanceTo(player.position);if(d<34){e.state='chase';const dir=new window.THREE.Vector3(player.position.x-e.g.position.x,0,player.position.z-e.g.position.z).normalize();if(d>10){e.g.position.addScaledVector(dir,dt*(d>22?1.65:1.15));e.g.rotation.y=Math.atan2(dir.x,dir.z);const walk=performance.now()*.009+e.home.x;if(e.g.userData.legs){e.g.userData.legs[0].rotation.x=Math.sin(walk)*.42;e.g.userData.legs[1].rotation.x=-Math.sin(walk)*.42;e.g.userData.arms[0].rotation.x=-.3+Math.sin(walk)*.12;e.g.userData.arms[1].rotation.x=-.4-Math.sin(walk)*.12}}if(d<24){e.shot+=dt;if(e.shot>(d<10?1.15:2.0)){e.shot=0;const damage=d<10?5+Math.random()*3:2+Math.random()*3;takeDamage(damage);damageFeedback();if(hp<=0){dead=true;$('dead').style.display='flex'}}}}else{e.state='patrol';e.g.position.x=e.home.x+Math.sin(performance.now()*.0004+e.home.z)*1.2}}
+enemyWait+=dt;for(const e of enemies){if(!e.alive)continue;const d=e.g.position.distanceTo(player.position);if(d<34){e.state='chase';const dir=new window.THREE.Vector3(player.position.x-e.g.position.x,0,player.position.z-e.g.position.z).normalize();if(d>10){
+ // Bots também disputam suprimentos: os feridos procuram kits médicos e os demais buscam equipamento.
+ let lootTarget=null,lootDist=Infinity;
+ for(const it of items){if(it.got||!['medkit','armor','helmet','ammo','supply'].includes(it.type))continue;
+ const need=it.type==='medkit'?e.hp<58:it.type==='armor'?!e.botArmor:it.type==='helmet'?!e.botHelmet:true;
+ if(!need)continue;const ld=e.g.position.distanceTo(it.mesh.position);if(ld<lootDist&&ld<28){lootDist=ld;lootTarget=it}}
+ if(lootTarget&&lootDist<2.5){lootTarget.got=true;scene.remove(lootTarget.mesh);
+ if(lootTarget.type==='medkit')e.hp=Math.min(60,e.hp+28);
+ if(lootTarget.type==='armor')e.botArmor=true;
+ if(lootTarget.type==='helmet')e.botHelmet=true;
+ if(lootTarget.type==='ammo'||lootTarget.type==='supply')e.botAmmo=true;
+ lootTarget=null;
+ }else if(lootTarget&&lootDist<18){const ld=new window.THREE.Vector3(lootTarget.mesh.position.x-e.g.position.x,0,lootTarget.mesh.position.z-e.g.position.z).normalize();e.g.position.addScaledVector(ld,dt*1.05);e.g.rotation.y=Math.atan2(ld.x,ld.z)}
+ else{e.g.position.addScaledVector(dir,dt*(d>22?1.65:1.15));e.g.rotation.y=Math.atan2(dir.x,dir.z)}
+ const walk=performance.now()*.009+e.home.x;if(e.g.userData.legs){e.g.userData.legs[0].rotation.x=Math.sin(walk)*.42;e.g.userData.legs[1].rotation.x=-Math.sin(walk)*.42;e.g.userData.arms[0].rotation.x=-.3+Math.sin(walk)*.12;e.g.userData.arms[1].rotation.x=-.4-Math.sin(walk)*.12}}if(d<24){e.shot+=dt;if(e.shot>(d<10?1.15:2.0)){e.shot=0;const damage=d<10?5+Math.random()*3:2+Math.random()*3;takeDamage(damage);damageFeedback();if(hp<=0){dead=true;$('dead').style.display='flex'}}}}else{e.state='patrol';e.g.position.x=e.home.x+Math.sin(performance.now()*.0004+e.home.z)*1.2}}
 if(missionStep===0&&player.position.distanceTo(new window.THREE.Vector3(14,0,-30))<12){missionStep=1;$('objective').textContent='Elimine pelo menos 3 guardas para liberar os documentos.';say('Acampamento localizado! Elimine 3 guardas ou use a cobertura para se aproximar.')}
 const target=new window.THREE.Vector3(23,0,-42);$('distance').textContent='Distância: '+Math.round(player.position.distanceTo(target))+' m';drawMinimap(dt);
 }
