@@ -114,6 +114,34 @@
 .actions #steerLeft{right:33%!important;bottom:19%!important}.actions #steerLeft:after{content:"◀"!important}.actions #steerRight{right:25%!important;bottom:19%!important}.actions #steerRight:after{content:"▶"!important}
 #lookzone{left:28%!important;right:30%!important;top:12%!important;bottom:18%!important;width:auto!important;z-index:2!important;touch-action:none!important}
 @media(max-width:600px){#controls>div:first-child{left:5%!important;bottom:12%!important}.stick{width:92px!important;height:92px!important}.actions #fire{right:18%!important;bottom:13%!important;width:64px!important;height:64px!important}.actions #aim{right:2%!important;bottom:32%!important}.actions #jump{right:2%!important;bottom:13%!important}.actions #grenade{left:15%!important;bottom:6%!important}}
+
+/* HUD v15: aproximação estrutural à referência enviada; controles funcionais existentes preservados */
+#hud .top{position:absolute;top:0;left:20%;right:20%;padding:calc(env(safe-area-inset-top) + 3px) 4px 0;display:flex;justify-content:center;gap:5px;flex-wrap:nowrap;z-index:4}
+#hud .stat{background:#10212bbd;border:1px solid #a9d6e65c;border-radius:3px;padding:3px 6px;font-size:clamp(9px,1.1vw,13px);white-space:nowrap}
+#minimap{left:0;right:auto;top:0;width:clamp(110px,17vw,205px);height:clamp(110px,17vw,205px);border:2px solid #c8d9c7a8;border-radius:0;background:#12252dbb}
+#battleInfo{top:0;right:0;max-width:26%;padding:5px 8px;border-radius:0;background:linear-gradient(90deg,#152733d9,#09131bea);border:1px solid #a6c5d466;font-size:clamp(10px,1.25vw,15px)}
+#mission{top:9%;left:39%;max-width:32%;padding:6px 16px;text-align:center;border-radius:2px;background:#152c3bd9;border:0;border-bottom:3px solid #d9b54b;font-size:clamp(10px,1.25vw,15px)}
+#lookzone{left:25%;right:22%;top:18%;bottom:14%;width:auto;z-index:2}
+#controls{inset:0!important;height:100%!important;bottom:0!important;left:0!important;right:0!important;display:block!important;padding:0!important;pointer-events:none!important;z-index:6!important}
+#controls>div:first-child{position:absolute!important;left:4.5%!important;bottom:12%!important;display:block!important;pointer-events:auto!important}
+.stick{width:clamp(75px,10vw,115px)!important;height:clamp(75px,10vw,115px)!important;border:1px solid #e5f0e477!important;border-radius:50%!important;background:radial-gradient(circle,#dbe7df18 0 22%,#dbe7df09 23% 58%,#111b1b48 60%)!important;box-shadow:none!important;backdrop-filter:none!important}
+.knob{left:33%!important;top:33%!important;width:34%!important;height:34%!important;border-radius:50%!important;background:#b9d3dc3b!important;border:1px solid #e4f3f5a1!important;box-shadow:none!important}
+.smallrow{display:none!important}
+.actions{position:absolute!important;inset:0!important;display:block!important;margin:0!important;max-width:none!important;pointer-events:none!important}
+.actions button{position:absolute!important;width:clamp(35px,5.5vw,64px)!important;height:clamp(35px,5.5vw,64px)!important;min-width:0!important;min-height:0!important;padding:2px!important;border-radius:50%!important;border:1px solid #e7f3f3a3!important;background:#263b4c82!important;color:#fff!important;font-size:clamp(8px,1vw,12px)!important;line-height:1.05!important;text-shadow:0 1px 3px #000!important;box-shadow:none!important;pointer-events:auto!important;touch-action:manipulation!important;backdrop-filter:blur(1px)!important}
+.actions .fire{right:17%!important;bottom:13%!important;width:clamp(58px,8vw,92px)!important;height:clamp(58px,8vw,92px)!important;border:2px solid #e5f3f8b5!important;background:#233c50a1!important;font-size:clamp(13px,2vw,22px)!important}
+.actions #jump{left:18%!important;bottom:30%!important;right:auto!important}.actions #jump:after{content:"🏃";font-size:clamp(18px,3vw,34px)}
+.actions #aim{left:25%!important;bottom:56%!important;right:auto!important}.actions #aim:after{content:"⌖";font-size:clamp(22px,3.4vw,39px)}
+.actions .fire:after{content:"➤";font-size:clamp(23px,3.5vw,39px);display:block;transform:rotate(-35deg)}
+.actions #reload{right:28%!important;bottom:18%!important}.actions #reload:after{content:"➤";font-size:clamp(17px,2.4vw,28px);display:block;transform:rotate(-45deg)}
+.actions #switch{right:7%!important;top:22%!important}.actions #switch:after{content:"⚔";font-size:clamp(19px,2.5vw,29px)}
+.actions #grenade{left:26%!important;top:12%!important}.actions #grenade:after{content:"◉";font-size:clamp(19px,2.5vw,29px)}
+.actions #jeep{left:6%!important;bottom:8%!important}.actions #jeep:after{content:"🚙";font-size:clamp(16px,2.2vw,25px)}
+.actions #savegame{left:15%!important;bottom:8%!important}.actions #savegame:after{content:"▣";font-size:clamp(18px,2.5vw,29px)}
+.actions #interact{right:28%!important;top:35%!important}.actions #interact:after{content:"♧";font-size:clamp(19px,2.5vw,29px)}
+.actions #pausebtn{right:1%!important;top:1%!important;width:30px!important;height:27px!important;border-radius:2px!important}.actions #pausebtn:after{content:"⚙";font-size:18px}
+.actions #steerLeft,.actions #steerRight{display:none!important}
+@media (orientation:landscape) and (max-height:500px){#minimap{width:clamp(100px,17vh,155px)!important;height:clamp(100px,17vh,155px)!important;top:0!important;left:0!important}#battleInfo{top:0!important;right:0!important}#mission{top:10%!important}#controls>div:first-child{left:5%!important;bottom:12%!important}#lookzone{top:17%!important;bottom:12%!important}}
 </style></head><body>
 <div id="rotateNotice"><div class="rotateCard"><span class="rotateIcon">📱</span><h2>VIRE O CELULAR</h2><p>Operação Himalaia foi feito para jogar na horizontal. Gire seu iPhone para continuar.</p></div></div>
 <div id="start"><div class="panel"><div style="font-size:30px">🏔️</div><h1>OPERAÇÃO HIMALAIA 3D</h1><p class="note">Preparando o cenário 3D…</p><button class="main" id="startbtn" type="button">INICIAR JOGO</button></div></div>
@@ -124,7 +152,7 @@
 
 <script>
 (()=>{'use strict';
-const GAME_BUILD='2026-10-22-freefire-hud-14';
+const GAME_BUILD='2026-10-22-freefire-hud-15';
 window.__OPH_BUILD__=GAME_BUILD;
 window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='BUILD '+GAME_BUILD+' | ERRO: '+(e.message||'falha JavaScript')+' (linha '+(e.lineno||'?')+')';});
 window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
