@@ -67,7 +67,6 @@ function update(dt){if(!player)return;let forward=(keys.KeyW||keys.ArrowUp?-1:0)
 let vy=player.userData.vy||0;if(player.position.y>.001||vy>0){vy-=14*dt;player.position.y=Math.max(0,player.position.y+vy*dt);if(player.position.y===0)vy=0;player.userData.vy=vy}
 player.rotation.y=yaw;const camTarget=new THREE.Vector3(player.position.x+Math.sin(yaw)*4,player.position.y+(crouching?1.5:2.4),player.position.z+Math.cos(yaw)*4);camera.position.lerp(camTarget,.16);const look=new THREE.Vector3(player.position.x-Math.sin(yaw)*2,player.position.y+1.35+pitch*5,player.position.z-Math.cos(yaw)*2);camera.lookAt(look);
 enemyWait+=dt;for(const e of enemies){if(!e.alive)continue;const d=e.g.position.distanceTo(player.position);if(d<23){e.state='chase';const dir=new THREE.Vector3(player.position.x-e.g.position.x,0,player.position.z-e.g.position.z).normalize();if(d>7){e.g.position.addScaledVector(dir,dt*1.3);e.g.rotation.y=Math.atan2(dir.x,dir.z)}else{e.shot+=dt;if(e.shot>1.15){e.shot=0;hp-=4+Math.random()*4;syncHud();if(hp<=0){hp=0;dead=true;$('dead').style.display='flex'}}}}else{e.state='patrol';e.g.position.x=e.home.x+Math.sin(performance.now()*.0004+e.home.z)*1.2}}
-}
 if(missionStep===0&&player.position.distanceTo(new THREE.Vector3(14,0,-30))<12){missionStep=1;$('objective').textContent='Elimine ou evite os guardas e encontre os documentos.';say('Você chegou ao acampamento inimigo.')}
 const target=new THREE.Vector3(23,0,-42);$('distance').textContent='Distância: '+Math.round(player.position.distanceTo(target))+' m';
 }
