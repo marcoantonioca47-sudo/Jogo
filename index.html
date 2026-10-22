@@ -205,6 +205,8 @@ function makeSoldier(uniformColor,enemy=false){
 const hero=makeSoldier(0x344c3d,false);player=hero.group;body=player;head=hero.head;gun=hero.rifle;player.position.set(0,0,18);scene.add(player);
 enemies=[];for(let i=0;i<6;i++){const soldier=makeSoldier(0x555b45,true),e=soldier.group;e.position.set(14+(i%3)*5,0,-24-Math.floor(i/3)*10);scene.add(e);enemies.push({g:e,hp:60,alive:true,home:e.position.clone(),state:'patrol',shot:0})}
 docs=box(23,.6,-42,.6,1,.6,mat(0xd5c47b));items=[{mesh:docs,type:'docs',got:false}];for(let i=0;i<4;i++){let o=box(-5+i*3,.45,8-i*8,.55,.8,.55,mat(i%2?0x8cbd72:0xb6a56c));items.push({mesh:o,type:'supply',got:false})}
+// Iluminação e sombras em objetos 3D para reforçar a profundidade visual
+scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
 camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,250);clock=new THREE.Clock();world.push({x:0,z:-8,r:2.4,solid:false});
 }
 function reset(){if(renderer){renderer.dispose();$('gamecanvas')?.remove()}world=[];enemies=[];items=[];hp=100;kills=0;weapon=0;ammoLoaded=[12,30];ammoReserve=[48,120];yaw=0;pitch=-.15;missionStep=0;dead=false;won=false;paused=false;buildWorld();syncHud()}
