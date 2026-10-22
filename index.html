@@ -59,9 +59,21 @@ function mat(color,rough=.9){return new THREE.MeshStandardMaterial({color,roughn
 function box(x,y,z,sx,sy,sz,m,parent=scene){const o=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),m);o.position.set(x,y,z);parent.add(o);return o}
 function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,0,z);g.add(new THREE.Mesh(new THREE.CylinderGeometry(.18*s,.3*s,2.4*s,7),mat(0x5c432d)));for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.ConeGeometry((1.2-i*.16)*s,1.8*s,7),mat(i%2?0x2c5136:0x385d3c));crown.position.y=1.5*s+i*.65*s;g.add(crown)}scene.add(g);world.push({x,z,r:.65*s,solid:true});}
 function rock(x,z,s=1){const o=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),mat(0x777d78));o.position.set(x,s*.55,z);o.scale.y=.75;scene.add(o);world.push({x,z,r:s*.8,solid:true})}
-function buildWorld(){scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb8c2);scene.fog=new THREE.Fog(0x9bb8c2,35,150);scene.add(new THREE.HemisphereLight(0xdcecff,0x4a553c,2));const sun=new THREE.DirectionalLight(0xfff0d5,2.1);sun.position.set(-25,45,20);scene.add(sun);
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220,1,1),mat(0x62764a));ground.rotation.x=-Math.PI/2;ground.position.y=-.12;scene.add(ground);
-for(let i=0;i<10;i++){let x=(i-5)*16,z=-42-(i%3)*12;const mountain=new THREE.Mesh(new THREE.ConeGeometry(13+(i%3)*3,22+(i%4)*5,7),mat(i%2?0x687a7c:0x788889));mountain.position.set(x,9,z);scene.add(mountain);const snow=new THREE.Mesh(new THREE.ConeGeometry(5+(i%3),8,7),mat(0xe2e9e8));snow.position.set(x,18+(i%4)*1.5,z);scene.add(snow)}
+function buildWorld(){scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb8c2);scene.fog=new THREE.Fog(0x9bb8c2,35,150);scene.add(new THREE.HemisphereLight(0xdcecff,0x343b32,1.65));const sun=new THREE.DirectionalLight(0xfff0d5,2.4);sun.position.set(-25,45,20);scene.add(sun);
+// Terreno com variação de cor para quebrar o aspecto artificial
+const groundGeo=new THREE.PlaneGeometry(220,220,70,70);groundGeo.rotateX(-Math.PI/2);
+const pos=groundGeo.attributes.position,colors=[];
+for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);const n=Math.sin(x*.21+Math.cos(z*.14))*Math.cos(z*.19)+Math.sin((x+z)*.31)*.35;const c=new THREE.Color(n>.35?0x77806b:n<-.35?0x53624b:0x667456);colors.push(c.r,c.g,c.b)}
+groundGeo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+const ground=new THREE.Mesh(groundGeo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));ground.position.y=-.12;scene.add(ground);
+// Cordilheira com picos irregulares e neve em faixas naturais
+function ridgePeak(x,z,r,h,seed){
+ const rings=7,segments=11,verts=[],indices=[],cols=[];
+ for(let j=0;j<=rings;j++){const t=j/rings;for(let k=0;k<segments;k++){const a=k/segments*Math.PI*2;const wobble=1+.16*Math.sin(a*3+seed)+.09*Math.cos(a*5-seed);const rr=r*(1-t)*wobble;const yy=h*t+(t>.62?Math.sin(a*4+seed)*.8*t:0);verts.push(Math.cos(a)*rr,yy,Math.sin(a)*rr);const snowline=.62+.08*Math.sin(a*3+seed);const col=t>snowline?new THREE.Color(t>.84?0xe5eceb:0xbac8c9):new THREE.Color(t>.42?0x777f7c:0x515e57);cols.push(col.r,col.g,col.b)}}
+ for(let j=0;j<rings;j++)for(let k=0;k<segments;k++){const a=j*segments+k,b=j*segments+(k+1)%segments,c=(j+1)*segments+k,d=(j+1)*segments+(k+1)%segments;indices.push(a,b,c,b,d,c)}
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));geo.setIndex(indices);geo.computeVertexNormals();const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,flatShading:true}));mesh.position.set(x,0,z);scene.add(mesh)
+}
+for(let i=0;i<13;i++){const x=(i-6)*15+(i%2?3:-2),z=-48-(i%4)*11;ridgePeak(x,z,14+(i%3)*3,24+(i%4)*6,i*.73)}
 // estrada e trilha
 const road=box(0,.015,-8,5,.04,120,mat(0x786c56));road.rotation.y=.04;
 for(let i=0;i<90;i++){const x=(Math.random()-.5)*100,z=30-Math.random()*130;if(Math.abs(x)<5&&z>-50)continue;if(Math.random()<.8)tree(x,z,.65+Math.random()*.9);else rock(x,z,.5+Math.random()*1.3)}
