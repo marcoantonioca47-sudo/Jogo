@@ -54,7 +54,7 @@
 
 <script>
 (()=>{'use strict';
-const GAME_BUILD='2026-10-22-upgrade-IA-1';
+const GAME_BUILD='2026-10-22-upgrade-MAPA-2';
 window.__OPH_BUILD__=GAME_BUILD;
 window.addEventListener('error',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='BUILD '+GAME_BUILD+' | ERRO: '+(e.message||'falha JavaScript')+' (linha '+(e.lineno||'?')+')';});
 window.addEventListener('unhandledrejection',e=>{const n=document.querySelector('#start .note');if(n)n.textContent='ERRO AO INICIAR: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));});
@@ -264,6 +264,13 @@ jeepGroup.position.set(3,0,18);scene.add(jeepGroup);
 const hero=makeSoldier(0x344c3d,false);player=hero.group;body=player;head=hero.head;gun=hero.rifle;player.position.set(0,0,18);scene.add(player);
 enemies=[];for(let i=0;i<6;i++){const soldier=makeSoldier(0x555b45,true),e=soldier.group;e.position.set(14+(i%3)*5,0,-24-Math.floor(i/3)*10);scene.add(e);enemies.push({g:e,hp:60,alive:true,home:e.position.clone(),state:'patrol',shot:0})}reinforcements=[makeEnemyJeep(31,-34),makeEnemyJeep(-16,-39)];
 docs=box(23,.6,-42,.6,1,.6,mat(0xd5c47b));items=[{mesh:docs,type:'docs',got:false}];for(let i=0;i<4;i++){let o=box(-5+i*3,.45,8-i*8,.55,.8,.55,mat(i%2?0x8cbd72:0xb6a56c));items.push({mesh:o,type:'supply',got:false})}outpostMesh=box(-18,.8,-12,2.4,1.6,2.4,mat(0x8e9b68));items.push({mesh:outpostMesh,type:'outpost',got:false});
+// NOVA ÁREA: vila de montanha com casas, caminho e ponto de abastecimento extra
+const villagePath=box(-31,.02,-43,3,.05,42,mat(0x827761));villagePath.rotation.y=-.28;
+for(let vi=0;vi<5;vi++){const vx=-43+(vi%3)*8,vz=-51+Math.floor(vi/3)*9;makeCabin(vx,vz,.78+(vi%2)*.08);world.push({x:vx,z:vz,r:2.7,solid:true});}
+// Posto avançado secundário, com caixas e torre sinalizadora
+makeBuilding(-49,-36,5,4,2.8,0x596052);makeWatchTower(-57,-42);makeSandbag(-52,-40,5);
+const beacon=box(-47,1.1,-33,.7,2.2,.7,mat(0xd6b85e));items.push({mesh:beacon,type:'supply',got:false});
+for(let vi=0;vi<14;vi++){const vx=-58+Math.random()*22,vz=-60+Math.random()*30;if(Math.abs(vx+49)>4)tree(vx,vz,.7+Math.random()*.45)}
 // Iluminação e sombras em objetos 3D para reforçar a profundidade visual
 scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
 camera=new window.THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,250);clock=new window.THREE.Clock();world.push({x:0,z:-8,r:2.4,solid:false});
