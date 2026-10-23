@@ -11,6 +11,7 @@ var gravity: float = 12.0
 var alerted: bool = false
 
 func _ready() -> void:
+    add_to_group("enemies")
     home = global_position
     var shape := CollisionShape3D.new()
     var capsule := CapsuleShape3D.new()
@@ -54,6 +55,9 @@ func _physics_process(delta: float) -> void:
         velocity.x = dir.x * move_speed
         velocity.z = dir.z * move_speed
         rotation.y = atan2(-dir.x, -dir.z)
+    if is_instance_valid(player) and global_position.distance_to(player.global_position) < 1.7:
+        if player.has_method("take_damage"):
+            player.take_damage(8)
     else:
         velocity.x = move_toward(velocity.x, 0.0, delta * 4.0)
         velocity.z = move_toward(velocity.z, 0.0, delta * 4.0)
