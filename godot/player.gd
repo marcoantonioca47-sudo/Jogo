@@ -7,6 +7,8 @@ var camera_yaw: float = 0.0
 var camera_pitch: float = -0.18
 var aiming: bool = false
 var gravity: float = 12.0
+var health: int = 100
+var damage_cooldown: float = 0.0
 var camera_pivot: Node3D
 var camera: Camera3D
 var bow: Node3D
@@ -107,7 +109,7 @@ func _physics_process(delta: float) -> void:
     var input_dir := move_vector
     if input_dir.length() < 0.05:
         input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-    var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+    var direction := Vector3(input_dir.x, 0, input_dir.y).rotated(Vector3.UP, camera_yaw).normalized()
     if direction.length() > 0.01:
         velocity.x = direction.x * move_speed
         velocity.z = direction.z * move_speed
@@ -120,6 +122,15 @@ func _physics_process(delta: float) -> void:
     camera.fov = lerp(camera.fov, 52.0 if aiming else 72.0, delta * 8.0)
     bow.visible = true
     move_and_slide()
+
+func take_damage(amount: int) -> void:
+    if damage_cooldown > 0.0:
+        return
+    health = maxi(0, health - amount)
+    damage_cooldown = 0.7
+
+func _process(delta: float) -> void:
+    damage_cooldown = maxf(0.0, damage_cooldown - delta)
 
 func rotate_camera(delta_x: float, delta_y: float) -> void:
     camera_yaw -= delta_x * 0.006
