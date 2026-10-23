@@ -75,10 +75,17 @@ func _make_box(label_name: String, pos: Vector3, size: Vector3, color: Color) ->
     var mesh := BoxMesh.new()
     mesh.size = size
     mesh_node.mesh = mesh
-    var mat := StandardMaterial3D.new()
-    mat.albedo_color = color
-    mat.roughness = 0.95
-    mesh_node.material_override = mat
+    if label_name == "Terrain":
+        mesh_node.material_override = _terrain_material()
+    elif label_name == "Trail" or label_name == "CampGround":
+        mesh_node.material_override = _soil_material()
+    elif label_name == "Hut" or label_name == "FencePost" or label_name == "FenceRail":
+        mesh_node.material_override = _wood_material(color)
+    else:
+        var mat := StandardMaterial3D.new()
+        mat.albedo_color = color
+        mat.roughness = 0.95
+        mesh_node.material_override = mat
     body.add_child(mesh_node)
     var collision := CollisionShape3D.new()
     var box_shape := BoxShape3D.new()
@@ -98,7 +105,7 @@ func _build_tree(pos: Vector3, scale_value: float) -> void:
     trunk_mesh.height = 2.6 * scale_value
     trunk.mesh = trunk_mesh
     trunk.position.y = 1.3 * scale_value
-    trunk.material_override = _mat(Color(0.28, 0.19, 0.11))
+    trunk.material_override = _wood_material(Color(0.28, 0.19, 0.11))
     tree.add_child(trunk)
     for i in range(3):
         var crown := MeshInstance3D.new()
@@ -106,7 +113,7 @@ func _build_tree(pos: Vector3, scale_value: float) -> void:
         cone.size = Vector3(2.2 * scale_value, 2.0 * scale_value, 2.2 * scale_value)
         crown.mesh = cone
         crown.position.y = (2.3 + i * 0.58) * scale_value
-        crown.material_override = _mat([Color(0.10, 0.24, 0.13), Color(0.14, 0.29, 0.16), Color(0.18, 0.32, 0.18)][i])
+        crown.material_override = _foliage_material([Color(0.10, 0.24, 0.13), Color(0.14, 0.29, 0.16), Color(0.18, 0.32, 0.18)][i])
         tree.add_child(crown)
     add_child(tree)
 
@@ -142,6 +149,83 @@ func _mat(color: Color) -> StandardMaterial3D:
     var material := StandardMaterial3D.new()
     material.albedo_color = color
     material.roughness = 0.9
+    return material
+
+func _terrain_material() -> ShaderMaterial:
+    var shader := Shader.new()
+    shader.code = """
+shader_type spatial;
+render_mode diffuse_burley, specular_schlick_ggx;
+varying vec3 world_pos;
+float hash21(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+float noise2(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash21(i), hash21(i + vec2(1.0, 0.0)), f.x),
+               mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+void vertex() {
+    world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+}
+void fragment() {
+    vec2 p = world_pos.xz * 0.32;
+    float broad = noise2(p * 0.22);
+    float fine = noise2(p * 2.2);
+    float detail = noise2(p * 8.0);
+    vec3 grass_dark = vec3(0.075, 0.14, 0.065);
+    vec3 grass_mid = vec3(0.16, 0.25, 0.10);
+    vec3 grass_light = vec3(0.29, 0.34, 0.15);
+    vec3 base = mix(grass_dark, grass_mid, smoothstep(0.18, 0.72, broad));
+    base = mix(base, grass_light, smoothstep(0.66, 0.94, fine) * 0.34);
+    base *= 0.86 + detail * 0.26;
+    ALBEDO = base;
+    ROUGHNESS = 0.98;
+}
+"""
+    var material := ShaderMaterial.new()
+    material.shader = shader
+    return material
+
+func _soil_material() -> ShaderMaterial:
+    var shader := Shader.new()
+    shader.code = """
+shader_type spatial;
+render_mode diffuse_burley;
+varying vec3 world_pos;
+float h(vec2 p) { return fract(sin(dot(p, vec2(41.7, 289.3))) * 15731.743); }
+float n(vec2 p) {
+    vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+    return mix(mix(h(i),h(i+vec2(1.0,0.0)),f.x),mix(h(i+vec2(0.0,1.0)),h(i+vec2(1.0,1.0)),f.x),f.y);
+}
+void vertex() { world_pos=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
+void fragment() {
+    float grain=n(world_pos.xz*2.8);
+    float pebble=n(world_pos.xz*13.0);
+    vec3 soil=mix(vec3(0.18,0.12,0.07),vec3(0.36,0.25,0.14),grain);
+    soil=mix(soil,vec3(0.43,0.36,0.25),smoothstep(0.65,0.9,pebble)*0.32);
+    ALBEDO=soil; ROUGHNESS=1.0;
+}
+"""
+    var material := ShaderMaterial.new()
+    material.shader = shader
+    return material
+
+func _wood_material(base_color: Color) -> StandardMaterial3D:
+    var material := StandardMaterial3D.new()
+    material.albedo_color = base_color
+    material.roughness = 0.94
+    material.metallic = 0.0
+    material.uv1_scale = Vector3(1.0, 3.5, 1.0)
+    return material
+
+func _foliage_material(base_color: Color) -> StandardMaterial3D:
+    var material := StandardMaterial3D.new()
+    material.albedo_color = base_color
+    material.roughness = 0.98
+    material.cull_mode = BaseMaterial3D.CULL_DISABLED
     return material
 
 func _spawn_player() -> void:
