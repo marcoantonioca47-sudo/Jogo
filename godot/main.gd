@@ -333,7 +333,7 @@ func _on_stick_input(event: InputEvent) -> void:
         else:
             player.move_vector = Vector2.ZERO
     elif event is InputEventScreenDrag:
-        var local := event.position - stick_center
+        var local: Vector2 = event.position - stick_center
         player.move_vector = Vector2(clamp(local.x / 55.0, -1.0, 1.0), clamp(local.y / 55.0, -1.0, 1.0))
 
 func _on_camera_input(event: InputEvent) -> void:
