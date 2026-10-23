@@ -172,9 +172,9 @@ func _build_hud() -> void:
     toast_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
     toast_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     var move_pad := Panel.new()
+    move_pad.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
     move_pad.position = Vector2(18, -170)
     move_pad.size = Vector2(150, 150)
-    move_pad.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
     move_pad.modulate = Color(1, 1, 1, 0.28)
     move_pad.mouse_filter = Control.MOUSE_FILTER_STOP
     root.add_child(move_pad)
@@ -193,10 +193,10 @@ func _build_hud() -> void:
     root.add_child(camera_zone)
     camera_zone.gui_input.connect(_on_camera_input)
     var buttons := [
-        ["PULAR", Vector2(-92, -170), Vector2(78, 60), _jump],
-        ["MIRAR", Vector2(-182, -100), Vector2(78, 60), _aim],
-        ["FLECHA", Vector2(-95, -94), Vector2(88, 72), _shoot],
-        ["USAR", Vector2(-185, -28), Vector2(78, 50), _interact]
+        ["PULAR", Vector2(-92, -170), Vector2(78, 60), Callable(self, "_jump")],
+        ["MIRAR", Vector2(-182, -100), Vector2(78, 60), Callable(self, "_aim")],
+        ["FLECHA", Vector2(-95, -94), Vector2(88, 72), Callable(self, "_shoot")],
+        ["USAR", Vector2(-185, -28), Vector2(78, 50), Callable(self, "_interact")]
     ]
     for entry in buttons:
         var button := Button.new()
