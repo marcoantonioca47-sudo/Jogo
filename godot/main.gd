@@ -146,7 +146,7 @@ func _mat(color: Color) -> StandardMaterial3D:
 
 func _spawn_player() -> void:
     player = PLAYER_SCRIPT.new()
-    player.position = Vector3(0, 0.2, 8)
+    player.position = Vector3(0, -0.1, 8)
     add_child(player)
 
 func _spawn_enemies() -> void:
@@ -184,6 +184,14 @@ func _build_hud() -> void:
     stick.mouse_filter = Control.MOUSE_FILTER_STOP
     move_pad.add_child(stick)
     stick.gui_input.connect(_on_stick_input)
+    var camera_zone := Control.new()
+    camera_zone.anchor_left = 0.42
+    camera_zone.anchor_right = 1.0
+    camera_zone.anchor_top = 0.18
+    camera_zone.anchor_bottom = 0.76
+    camera_zone.mouse_filter = Control.MOUSE_FILTER_STOP
+    root.add_child(camera_zone)
+    camera_zone.gui_input.connect(_on_camera_input)
     var buttons := [
         ["PULAR", Vector2(-92, -170), Vector2(78, 60), _jump],
         ["MIRAR", Vector2(-182, -100), Vector2(78, 60), _aim],
@@ -193,9 +201,9 @@ func _build_hud() -> void:
     for entry in buttons:
         var button := Button.new()
         button.text = entry[0]
+        button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
         button.position = entry[1]
         button.size = entry[2]
-        button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
         button.add_theme_font_size_override("font_size", 15)
         button.add_theme_color_override("font_color", Color.WHITE)
         button.add_theme_color_override("font_hover_color", Color.WHITE)
@@ -205,14 +213,6 @@ func _build_hud() -> void:
         button.button_down.connect(entry[3])
         if entry[0] == "MIRAR":
             button.button_up.connect(func(): _aim_release())
-    var camera_zone := Control.new()
-    camera_zone.anchor_left = 0.42
-    camera_zone.anchor_right = 1.0
-    camera_zone.anchor_top = 0.18
-    camera_zone.anchor_bottom = 0.76
-    camera_zone.mouse_filter = Control.MOUSE_FILTER_STOP
-    root.add_child(camera_zone)
-    camera_zone.gui_input.connect(_on_camera_input)
 
 func _label(parent: Control, text_value: String, pos: Vector2, size_value: Vector2, font_size: int) -> Label:
     var label := Label.new()
@@ -317,7 +317,7 @@ func _process(delta: float) -> void:
 
 func _update_hud() -> void:
     if is_instance_valid(health_label):
-        health_label.text = "VIDA %d" % health
+        health_label.text = "VIDA %d" % (player.health if is_instance_valid(player) else health)
     if is_instance_valid(arrow_label):
         arrow_label.text = "FLECHAS %d" % arrows
 
